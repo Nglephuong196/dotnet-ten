@@ -1,0 +1,6 @@
+@ononlaw_api_HostAddress = http://localhost:5244
+
+GET {{ononlaw_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

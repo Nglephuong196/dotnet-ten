@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ConsoleApp/ConsoleApp.csproj" Id="b6af0181-754d-42a6-8b09-e46bdc9786f6" />
+  <Project Path="ononlaw-api/ononlaw-api.csproj" />
+  <Project Path="WorkerService/WorkerService.csproj" Id="adedfece-9bef-4616-8fb6-a8addb387163" />
+</Solution>
