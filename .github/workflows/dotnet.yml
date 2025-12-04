@@ -8,6 +8,16 @@ jobs:
     build:
         runs-on: ubuntu-latest
 
+        strategy:
+            matrix:
+                include:
+                    - project: Project1
+                      path: ./Project1/Project1.csproj
+                      port: 5001
+                    - project: Project2
+                      path: ./Project2/Project2.csproj
+                      port: 5002
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -65,3 +75,36 @@ jobs:
               with:
                   name: WorkerService-build
                   path: ./publish/WorkerService
+
+            - name: Copy files to EC2
+              uses: appleboy/scp-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USER }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  source: './publish/ononlaw-api'
+                  target: '/var/www/myapi'
+                  strip_components: 1
+
+            - name: Restart application on EC2
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USER }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  script: |
+                      # Stop the application
+                      sudo systemctl stop myapi || true
+
+                      # Set permissions
+                      sudo chown -R ubuntu:ubuntu /var/www/myapi
+                      chmod +x /var/www/myapi/*.dll
+
+                      # Start the application
+                      sudo systemctl start myapi
+
+                      # Check status
+                      sudo systemctl status myapi
+
+                      # Show logs
+                      sudo journalctl -u myapi -n 50 --no-pager
