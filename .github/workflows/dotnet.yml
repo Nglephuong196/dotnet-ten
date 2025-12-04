@@ -74,7 +74,13 @@ jobs:
                   username: ${{ secrets.EC2_USER }}
                   key: ${{ secrets.EC2_SSH_KEY }}
                   script: |
-                      # Create directory with proper permissions
+                      # Stop the application first
+                      sudo systemctl stop myapi || true
+
+                      # Remove old files
+                      sudo rm -rf /var/www/myapi
+
+                      # Create fresh directory with proper permissions
                       sudo mkdir -p /var/www/myapi
                       sudo chown -R ubuntu:ubuntu /var/www/myapi
                       sudo chmod -R 755 /var/www/myapi
@@ -96,11 +102,9 @@ jobs:
                   username: ${{ secrets.EC2_USER }}
                   key: ${{ secrets.EC2_SSH_KEY }}
                   script: |
-                      # Stop the application
-                      sudo systemctl stop myapi || true
-
-                      # Set permissions
+                      # Set permissions again after copy
                       sudo chown -R ubuntu:ubuntu /var/www/myapi
+                      sudo chmod -R 755 /var/www/myapi
                       chmod +x /var/www/myapi/*.dll
 
                       # Start the application
