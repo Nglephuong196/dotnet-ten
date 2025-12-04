@@ -67,15 +67,27 @@ jobs:
                   name: WorkerService-build
                   path: ./publish/WorkerService
 
+            - name: Prepare EC2 directory
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USER }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  script: |
+                      # Create directory with proper permissions
+                      sudo mkdir -p /var/www/myapi
+                      sudo chown -R ubuntu:ubuntu /var/www/myapi
+                      sudo chmod -R 755 /var/www/myapi
+
             - name: Copy files to EC2
               uses: appleboy/scp-action@master
               with:
                   host: ${{ secrets.EC2_HOST }}
                   username: ${{ secrets.EC2_USER }}
                   key: ${{ secrets.EC2_SSH_KEY }}
-                  source: './publish/ononlaw-api'
+                  source: './publish/ononlaw-api/*'
                   target: '/var/www/myapi'
-                  strip_components: 1
+                  strip_components: 2
 
             - name: Restart application on EC2
               uses: appleboy/ssh-action@master
