@@ -7,16 +7,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-
-        strategy:
-            matrix:
-                include:
-                    - project: Project1
-                      path: ./Project1/Project1.csproj
-                      port: 5001
-                    - project: Project2
-                      path: ./Project2/Project2.csproj
-                      port: 5002
+        environment: dev
 
         steps:
             - name: Checkout code
